@@ -40,6 +40,6 @@ def calc_meno_score(responses):
     percentage_score = convert_to_percentage(raw_score)
 
     return {
-        "raw_score": raw_score,
-        "percentage_score": percentage_score
-    }
+    "raw_score": raw_score,
+    "percentage_score": percentage_score
+}

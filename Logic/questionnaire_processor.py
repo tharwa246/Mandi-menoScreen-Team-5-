@@ -1,5 +1,7 @@
-from Data.questions import questions
-# Importing the questions from the questions file
+from DatabaseTemp.question_repository import get_questions_from_database
+
+questions = get_questions_from_database()
+# loads questionnaire data from the SQLite database
 
 
 # list of questionnaire blocks in the order they should appear - 

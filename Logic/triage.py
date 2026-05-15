@@ -205,3 +205,42 @@ def format_clinician_summary_message(percentage_score, band):
 
     return "Error: Band not found in templates."
 
+# Determines the full triage result based on the score
+def determine_triage(percentage_score, complex_case=False):
+
+    band_key = get_band_from_score(
+        percentage_score,
+        complex_case
+    )
+
+    template = get_template(band_key)
+
+    if template is None:
+
+        return {
+            "band": "Error",
+            "score_range": "N/A",
+            "colour": "grey",
+            "on_screen_message": "Error: Triage band not found.",
+            "clinician_summary_message": "Error: Clinician summary not available.",
+            "patient_handout_message": "Error: Patient handout not available."
+        }
+
+    return {
+
+        "band": template["band"],
+
+        "score_range": template["score_range"],
+
+        "colour": template["colour"],
+
+        "on_screen_message": template["on_screen_message"],
+
+        "clinician_summary_message":
+        template["clinician_summary_message"].format(
+            percentage_score=percentage_score
+        ),
+
+        "patient_handout_message":
+        template["patient_handout_message"]
+    }

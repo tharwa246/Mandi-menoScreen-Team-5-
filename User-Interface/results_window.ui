@@ -44,8 +44,9 @@ border: none;</string>
           </property>
           <property name="font">
            <font>
-            <family>Arial</family>
-            <pointsize>20</pointsize>
+            <family>Comic Sans MS</family>
+            <pointsize>26</pointsize>
+            <italic>true</italic>
             <bold>true</bold>
            </font>
           </property>
@@ -66,23 +67,25 @@ border: none;</string>
          <widget class="QLabel" name="menolikelihoodLabel">
           <property name="geometry">
            <rect>
-            <x>160</x>
+            <x>80</x>
             <y>30</y>
-            <width>251</width>
+            <width>431</width>
             <height>51</height>
            </rect>
           </property>
           <property name="font">
            <font>
-            <pointsize>22</pointsize>
+            <family>Comic Sans MS</family>
+            <pointsize>24</pointsize>
+            <italic>true</italic>
             <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">color: #2C1810;</string>
+           <string notr="true">color: #C94A2B;</string>
           </property>
           <property name="text">
-           <string>MenoLikelihood</string>
+           <string>MenoLikelihood Results </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -91,21 +94,21 @@ border: none;</string>
          <widget class="QLabel" name="scoreLabel">
           <property name="geometry">
            <rect>
-            <x>180</x>
-            <y>130</y>
-            <width>71</width>
-            <height>16</height>
+            <x>160</x>
+            <y>140</y>
+            <width>91</width>
+            <height>31</height>
            </rect>
           </property>
           <property name="font">
            <font>
-            <family>Arial</family>
-            <pointsize>14</pointsize>
-            <bold>true</bold>
+            <family>Carmos</family>
+            <pointsize>22</pointsize>
+            <bold>false</bold>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">color: #2C1810;</string>
+           <string notr="true">color: #C94A2B;</string>
           </property>
           <property name="text">
            <string>Score:</string>
@@ -114,8 +117,8 @@ border: none;</string>
          <widget class="QLineEdit" name="scoreDisplay">
           <property name="geometry">
            <rect>
-            <x>260</x>
-            <y>110</y>
+            <x>280</x>
+            <y>130</y>
             <width>113</width>
             <height>51</height>
            </rect>
@@ -127,8 +130,8 @@ border: none;</string>
          <widget class="QTextEdit" name="messageDisplay">
           <property name="geometry">
            <rect>
-            <x>20</x>
-            <y>200</y>
+            <x>30</x>
+            <y>230</y>
             <width>541</width>
             <height>111</height>
            </rect>
@@ -141,10 +144,18 @@ border: none;</string>
           <property name="geometry">
            <rect>
             <x>210</x>
-            <y>370</y>
+            <y>410</y>
             <width>171</width>
             <height>41</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Comic Sans MS</family>
+            <pointsize>-1</pointsize>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {

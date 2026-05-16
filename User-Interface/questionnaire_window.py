@@ -7,14 +7,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QWidget, QButtonGroup, QMessageBox
 
+from results_window import ResultsWindow
 from Logic.questionnaire_processor import QuestionnaireProcessor
 from Logic.scoring import calc_meno_score
 from Logic.triage import determine_triage
-
-try:
-    from Logic.safety_flags import is_complex_case
-except ImportError:
-    from Logic.safety_flags import is_complex_case
+from Logic.safety_flags import is_complex_case
 
 
 class QuestionnaireWindow(QWidget):
@@ -24,56 +21,28 @@ class QuestionnaireWindow(QWidget):
 
         # Loads the UI design made in Qt Designer
         uic.loadUi("User-Interface/questionnaire_window.ui", self)
-        # Forces navigation button styling so text is visible
-        self.back_button.setText("Back")
-        self.next_button.setText("Next")
 
-        self.back_button.setStyleSheet("""
-            QPushButton {
-                background-color: #673C33;
-                 color: #FFFFFF;
-                 border: 2px solid #673C33;
-                 border-radius: 6px;
-                 font-size: 13px;
-                 font-weight: bold;
-                  padding: 6px;
-                }
-                """)
+        # Applies Mandi brand colours and fonts
+        self.apply_brand_styling()
 
-        self.next_button.setStyleSheet("""
-             QPushButton {
-                  background-color: #673C33;
-                 color: #FFFFFF;
-                 border: 2px solid #673C33;
-                 border-radius: 6px;
-                 font-size: 13px;
-                 font-weight: bold;
-                 padding: 6px;
-                 }
-                """)
+        # Creates the questionnaire processor
+        self.processor = QuestionnaireProcessor()
 
-        self.back_button.raise_()
-        self.next_button.raise_()
+        # Stores radio button groups for each question row
+        self.button_groups = []
 
-        # Forces the MANDI heading to display properly
-        self.mandi_label.setText("MANDI")
+        # Connects UI buttons to Python functions
+        self.next_button.clicked.connect(self.next_block)
+        self.back_button.clicked.connect(self.previous_block)
 
-        self.mandi_label.setStyleSheet("""
-            QLabel {
-                color: white;
-                background-color: transparent;
-                font-family: Montserrat;
-                font-size: 26px;
-                font-weight: bold;
-            }
-        """)
+        # Loads the first block when the window opens
+        self.load_current_block()
 
-        # Makes sure the label is visible and above the pink frame
-        self.mandi_label.raise_()
-        self.mandi_label.show()
-    
+
+    def apply_brand_styling(self):
+
+
         self.setStyleSheet("""
-        
             QWidget {
                 background-color: #F4ECE4;
                 color: #673C33;
@@ -87,11 +56,9 @@ class QuestionnaireWindow(QWidget):
                 font-family: Montserrat, Arial;
             }
 
-            #section_name_label {
-                color: #673C33;
-                font-family: Montserrat, Arial;
-                font-size: 20px;
-                font-weight: 600;
+            #header_frame {
+                background-color: #F5A623;
+                border: none;
             }
 
             #content_frame {
@@ -99,36 +66,37 @@ class QuestionnaireWindow(QWidget):
                 border: none;
             }
 
-            #header_frame {
-                background-color: #E66C84;
-                border: none;
+            #section_name_label {
+                color: #C94A2B;
+                font-family: Montserrat, Arial;
+                font-size: 20px;
+                font-weight: bold;
             }
 
             QPushButton {
                 background-color: #673C33;
                 color: white;
                 border: 2px solid #673C33;
-                border-radius: 4px;
-                padding: 8px 18px;
+                border-radius: 6px;
+                padding: 6px;
                 font-family: Montserrat, Arial;
-                font-size: 12px;
+                font-size: 13px;
                 font-weight: bold;
             }
-                           
-      
 
             QPushButton:hover {
-                background-color: #C94A2B;
-                color: #F4ECE4;
+                background-color: #EE8954;
+                color: white;
             }
 
             QPushButton:pressed {
-                background-color: #E66C84;
-                color: #F4ECE4;
+                background-color: #F5A623;
+                color: white;
             }
-                           
+
             QRadioButton {
                 color: #673C33;
+                font-family: Montserrat, Arial;
                 font-size: 12px;
                 spacing: 8px;
             }
@@ -142,36 +110,73 @@ class QuestionnaireWindow(QWidget):
             }
 
             QRadioButton::indicator:checked {
-                background-color: #E66C84;
+                background-color: #F5A623;
                 border: 2px solid #673C33;
             }
 
-            
             QProgressBar {
-                background-color: #F4ECE4;
+                background-color: white;
                 border: 1px solid #673C33;
                 height: 10px;
             }
 
             QProgressBar::chunk {
-                background-color: #E66C84;
+                background-color: #F5A623;
             }
         """)
 
+                # Forces navigation button colours
+        button_style = """
+            QPushButton {
+                background-color: #C94A2B;
+                color: white;
+                border: 2px solid #C94A2B;
+                border-radius: 6px;
+                font-family: Montserrat, Arial;
+                font-size: 13px;
+                font-weight: bold;
+                padding: 6px;
+            }
 
-        
-        # Creates the questionnaire processor
-        self.processor = QuestionnaireProcessor()
+            QPushButton:hover {
+                background-color: #EE8954;
+                color: white;
+            }
 
-        # Stores radio button groups for each question row
-        self.button_groups = []
+            QPushButton:pressed {
+                background-color: #F5A623;
+                color: white;
+            }
+        """
 
-        # Connects UI buttons to Python functions
-        self.next_button.clicked.connect(self.next_block)
-        self.back_button.clicked.connect(self.previous_block)
+        self.back_button.setStyleSheet(button_style)
+        self.next_button.setStyleSheet(button_style)
 
-        # Loads the first block when the window opens
-        self.load_current_block()
+        self.back_button.raise_()
+        self.next_button.raise_()
+
+
+        # MANDI heading
+        self.mandi_label.setText("MANDI")
+        self.mandi_label.setStyleSheet("""
+            QLabel {
+                color: white;
+                background-color: transparent;
+                font-family: Montserrat, Arial;
+                font-size: 26px;
+                font-weight: bold;
+            }
+        """)
+
+        self.mandi_label.raise_()
+        self.mandi_label.show()
+
+        # Navigation buttons
+        self.back_button.setText("Back")
+        self.next_button.setText("Next")
+
+        self.back_button.raise_()
+        self.next_button.raise_()
 
 
     # Creates radio button groups based on the current UI design
@@ -240,23 +245,20 @@ class QuestionnaireWindow(QWidget):
             self.fourth_question
         ]
 
-        # Hide all question rows first
+        # Hide question labels first
         for label in question_labels:
             label.hide()
 
-            # Hide all old buttons and clear previous selections
-            for group in self.button_groups:
+        # Hide all old buttons and clear previous selections
+        for group in self.button_groups:
 
-                # Temporarily allows buttons to be unchecked
-                 group.setExclusive(False)
+            group.setExclusive(False)
 
-                 for button in group.buttons():
+            for button in group.buttons():
+                button.hide()
+                button.setChecked(False)
 
-                      button.hide()
-                      button.setChecked(False)
-
-                     # Turns exclusivity back on
-                 group.setExclusive(True)
+            group.setExclusive(True)
 
         # Show questions for the current block
         for index, question in enumerate(questions):
@@ -330,7 +332,7 @@ class QuestionnaireWindow(QWidget):
         if not saved_successfully:
             return
 
-        # If this is the last block, calculate and show results
+        # Final block opens results
         if self.processor.current_block_index == 6:
             self.show_results()
             return
@@ -346,13 +348,14 @@ class QuestionnaireWindow(QWidget):
         self.load_current_block()
 
 
-    # Calculates score, checks safety flag, and displays triage result
+    # Calculates score, checks safety flag, and opens results window
     def show_results(self):
+
+        print("Submit clicked - opening results window")
 
         responses = self.processor.get_responses()
 
         score_result = calc_meno_score(responses)
-
         percentage_score = score_result["percentage_score"]
 
         question_23_answer = responses.get(23, "No")
@@ -363,19 +366,14 @@ class QuestionnaireWindow(QWidget):
             complex_case
         )
 
-        result_message = (
-            f"MenoLikelihood Score: {percentage_score}/100\n\n"
-            f"Triage Band: {triage_result['band']}\n\n"
-            f"{triage_result['on_screen_message']}\n\n"
-            f"Clinician Summary:\n"
-            f"{triage_result['clinician_summary_message']}"
+        self.results_window = ResultsWindow(
+            percentage_score,
+            triage_result
         )
 
-        QMessageBox.information(
-            self,
-            "MenoScreen Result",
-            result_message
-        )
+        self.results_window.show()
+        self.results_window.raise_()
+        self.results_window.activateWindow()
 
 
 # Starts the application

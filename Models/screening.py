@@ -1,2 +1,9 @@
-# Naomi: I don't think the screenings will go into the database either.
-# But I won't remove the class
+from dataclasses import dataclass
+
+@dataclass
+class ScreeningQuestion:
+    id: int
+    text: str
+    type: str
+    category: str
+    options: list
